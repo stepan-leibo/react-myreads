@@ -1,31 +1,56 @@
-import React, {Component} from 'react'
-import { Link } from 'react-router-dom'
+import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
+import { search, update } from '../BooksAPI';
+import Book from "./Book";
+import { toast } from 'react-toastify';
+import SearchInput from "./SearchInput";
 
 class Search extends Component {
-    render() {
+    state = {
+        books: []
+    };
+
+    onSearchTriggered (query) {
+        search(query, 10)
+            .then(data => {
+                if (!data.hasOwnProperty('error')) {
+                    this.setState({
+                        books: data
+                    });
+                } else {
+                    toast.error(data.error);
+                }
+            });
+    }
+
+    onBookAdded (book, shelf) {
+        update(book, shelf)
+            .then(book => {
+                toast.success(`Book ${book.title} is added.`);
+            });
+    }
+
+    render () {
         return (
             <div className="search-books">
                 <div className="search-books-bar">
-                    <Link to='/' className="close-search">Close</Link>
+                    <Link to="/" className="close-search">Close</Link>
                     <div className="search-books-input-wrapper">
-                        {/*
-                  NOTES: The search from BooksAPI is limited to a particular set of search terms.
-                  You can find these search terms here:
-                  https://github.com/udacity/reactnd-project-myreads-starter/blob/master/SEARCH_TERMS.md
-
-                  However, remember that the BooksAPI.search method DOES search by title or author. So, don't worry if
-                  you don't find a specific author or title. Every search is limited by search terms.
-                */}
-                        <input type="text" placeholder="Search by title or author"/>
-
+                        <SearchInput onSearchTriggered={this.onSearchTriggered.bind(this)}/>
                     </div>
                 </div>
                 <div className="search-books-results">
-                    <ol className="books-grid"></ol>
+                    <ol className="books-grid">
+                        {this.state.books.map(book => (
+                            <li key={book.id}>
+                                <Book book={book} onShelfChanged={this.onBookAdded.bind(this)} isSearch/>
+                            </li>
+                        ))}
+                    </ol>
                 </div>
             </div>
-        )
+        );
     }
 }
 
-export default Search
+export default Search;
