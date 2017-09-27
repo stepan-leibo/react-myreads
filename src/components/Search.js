@@ -4,18 +4,24 @@ import { search, update } from '../BooksAPI';
 import Book from "./Book";
 import { toast } from 'react-toastify';
 import SearchInput from "./SearchInput";
+import PropTypes from 'prop-types';
 
 class Search extends Component {
+    static propTypes = {
+        bookIds: PropTypes.array.isRequired,
+        onBookAdded: PropTypes.func.isRequired
+    };
+
     state = {
         books: []
     };
 
     onSearchTriggered (query) {
-        search(query, 10)
+        search(query, 20)
             .then(data => {
-                if (!data.hasOwnProperty('error')) {
+                if (!data || !data.hasOwnProperty('error')) {
                     this.setState({
-                        books: data
+                        books: data.filter(book => !this.props.bookIds.includes(book.id))
                     });
                 } else {
                     toast.error(data.error);
@@ -25,8 +31,12 @@ class Search extends Component {
 
     onBookAdded (book, shelf) {
         update(book, shelf)
-            .then(book => {
+            .then(data => {
                 toast.success(`Book is added.`);
+                this.props.onBookAdded(book, shelf);
+                this.setState({
+                    books: this.state.books.filter(item => item.id !== book.id)
+                });
             });
     }
 

@@ -1,29 +1,30 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { getAll, update as bookApiUpdate } from '../BooksAPI';
+import { update as bookApiUpdate } from '../BooksAPI';
 import BookShelf from "./BookShelf";
 import update from 'react-addons-update';
+import PropTypes from 'prop-types';
 
 class BookLists extends Component {
-    componentDidMount () {
-        getAll().then((books) => {
-            this.setState({
-                books: [...this.state.books, ...books]
-            });
-        });
+
+    static propTypes={
+        books: PropTypes.array.isRequired
+    };
+
+    constructor (props) {
+        super(props);
+        this.state = {
+            books: props.books
+        };
     }
 
     componentWillReceiveProps (nextProps) {
-        if (nextProps.bookAdded) {
+        if (nextProps.books) {
             this.setState({
-                books: [...this.books, nextProps.bookAdded]
+                books: nextProps.books
             });
         }
     }
-
-    state = {
-        books: []
-    };
 
     onShelfChanged (book, newShelfName) {
         let index = this.state.books.indexOf(book);

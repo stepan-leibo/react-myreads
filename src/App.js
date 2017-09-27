@@ -5,17 +5,38 @@ import { Route } from 'react-router-dom';
 import Search from "./components/Search";
 import BookLists from "./components/BookLists";
 import { ToastContainer } from 'react-toastify';
+import { getAll } from './BooksAPI';
 import 'react-toastify/dist/ReactToastify.min.css';
 
 class BooksApp extends React.Component {
+
+    componentDidMount () {
+        getAll().then((books) => {
+            this.setState({
+                books: books
+            });
+        });
+    }
+
+    state = {
+        books: []
+    };
+
+    onBookAdded (book, shelf) {
+        book.shelf = shelf;
+        this.setState({
+            books: [...this.state.books, book]
+        });
+    }
+
     render () {
         return (
             <div className="app">
                 <Route exact path="/search" render={() => (
-                    <Search/>
+                    <Search bookIds={this.state.books.map(book => book.id)} onBookAdded={this.onBookAdded.bind(this)}/>
                 )}/>
                 <Route exact path="/" render={() => (
-                    <BookLists/>
+                    <BookLists books={this.state.books}/>
                 )}/>
                 <ToastContainer
                     position="bottom-right"
