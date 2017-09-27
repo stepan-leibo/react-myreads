@@ -9,6 +9,10 @@ To get started developing right away:
 * install all project dependencies with `npm install`
 * start the development server with `npm start`
 
+## Web site
+
+https://stepan-leibo.github.io/react-myreads/
+
 ## Authors
 
 Stepan Leibo
