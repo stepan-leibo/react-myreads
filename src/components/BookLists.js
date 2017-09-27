@@ -4,6 +4,7 @@ import { update as bookApiUpdate } from '../BooksAPI';
 import BookShelf from "./BookShelf";
 import update from 'react-addons-update';
 import PropTypes from 'prop-types';
+import sortBy from 'sort-by';
 
 class BookLists extends Component {
 
@@ -14,14 +15,14 @@ class BookLists extends Component {
     constructor (props) {
         super(props);
         this.state = {
-            books: props.books
+            books: props.books.sort(sortBy('title'))
         };
     }
 
     componentWillReceiveProps (nextProps) {
         if (nextProps.books) {
             this.setState({
-                books: nextProps.books
+                books: nextProps.books.sort(sortBy('title'))
             });
         }
     }
