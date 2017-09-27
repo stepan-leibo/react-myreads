@@ -26,7 +26,7 @@ class Search extends Component {
     onBookAdded (book, shelf) {
         update(book, shelf)
             .then(book => {
-                toast.success(`Book ${book.title} is added.`);
+                toast.success(`Book is added.`);
             });
     }
 
