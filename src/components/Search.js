@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { search, update } from '../BooksAPI';
 import Book from "./Book";
 import { toast } from 'react-toastify';
-import SearchInput from "./SearchInput";
+import { Debounce } from 'react-throttle';
 import PropTypes from 'prop-types';
 
 class Search extends Component {
@@ -13,15 +13,15 @@ class Search extends Component {
     };
 
     state = {
-        books: []
+        searchBooks: []
     };
 
-    onSearchTriggered (query) {
-        search(query, 20)
+    onSearchTriggered (event) {
+        search(event.target.value, 20)
             .then(data => {
                 if (!data || !data.hasOwnProperty('error')) {
                     this.setState({
-                        books: data.filter(book => !this.props.bookIds.includes(book.id))
+                        searchBooks: data.filter(book => !this.props.bookIds.includes(book.id))
                     });
                 } else {
                     toast.error(data.error);
@@ -35,7 +35,7 @@ class Search extends Component {
                 toast.success(`Book is added.`);
                 this.props.onBookAdded(book, shelf);
                 this.setState({
-                    books: this.state.books.filter(item => item.id !== book.id)
+                    searchBooks: this.state.searchBooks.filter(item => item.id !== book.id)
                 });
             });
     }
@@ -46,12 +46,16 @@ class Search extends Component {
                 <div className="search-books-bar">
                     <Link to="/" className="close-search">Close</Link>
                     <div className="search-books-input-wrapper">
-                        <SearchInput onSearchTriggered={this.onSearchTriggered.bind(this)}/>
+                        <Debounce time="300" handler="onChange">
+                            <input type="text"
+                                   placeholder="Search by title or author"
+                                   onChange={event => this.onSearchTriggered(event)} />
+                        </Debounce>
                     </div>
                 </div>
                 <div className="search-books-results">
                     <ol className="books-grid">
-                        {this.state.books.map(book => (
+                        {this.state.searchBooks.map(book => (
                             <li key={book.id}>
                                 <Book book={book} onShelfChanged={this.onBookAdded.bind(this)} isSearch/>
                             </li>

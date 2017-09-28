@@ -8,19 +8,12 @@ class Book extends Component {
         isSearch: PropTypes.bool
     };
 
-    constructor (props) {
-        super(props);
-        this.state = {
-            book: props.book
-        };
-    }
-
     changeShelf (event) {
-        this.props.onShelfChanged(this.state.book, event.target.value);
+        this.props.onShelfChanged(this.props.book, event.target.value);
     }
 
     render () {
-        let book = this.state.book;
+        let book = this.props.book;
         return (
             <div className="book">
                 <div className="book-top">

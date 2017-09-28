@@ -9,26 +9,14 @@ class BookShelf extends Component {
         title: PropTypes.string.isRequired
     };
 
-    constructor (props) {
-        super(props);
-        this.state = {
-            books: props.books
-        };
-    }
-
-    componentWillReceiveProps (nextProps) {
-        this.setState({
-            books: nextProps.books
-        });
-    }
-
     render () {
+        const books = this.props.books;
         return (
             <div className="bookshelf">
                 <h2 className="bookshelf-title">{this.props.title}</h2>
                 <div className="bookshelf-books">
                     <ol className="books-grid">
-                        {this.state.books.map(book => (
+                        {books.map(book => (
                             <li key={book.id}>
                                 <Book book={book} onShelfChanged={this.props.onShelfChanged}/>
                             </li>
